@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -10,15 +9,17 @@ import java.util.logging.SimpleFormatter;
  */
 
 public class Game {
-    private ArrayList players = new ArrayList();
+    //todo-: Move playerName into class Player
+    private ArrayList<Player> players = new ArrayList<Player>(); //玩家的名字
+    //todo: Move places into class Player
     private int[] places = new int[6]; //玩家位置
+    //todo: Move purses into class Player
     private int[] purses = new int[6]; //金币数量
+    //todo: Move inPenaltyBox into class Player
     private boolean[] inPenaltyBox = new boolean[6]; //是否在禁闭室
 
-    private LinkedList popQuestions = new LinkedList();
-    private LinkedList scienceQuestions = new LinkedList();
-    private LinkedList sportsQuestions = new LinkedList();
-    private LinkedList rockQuestions = new LinkedList();
+    //todo: Move question lists to a new class QuestionMaker
+    private final QuestionMaker questionMaker = new QuestionMaker();
 
     private int currentPlayer = 0;
     private boolean isGettingOutOfPenaltyBox;
@@ -37,24 +38,18 @@ public class Game {
         logger.addHandler(fileHandler);
 
         for (int i = 0; i < 50; i++) {
-            popQuestions.addLast("Pop Question " + i);
-            scienceQuestions.addLast("Science Question " + i);
-            sportsQuestions.addLast("Sports Question " + i);
-            rockQuestions.addLast(" Rock Question " + i);
+            questionMaker.addPopQuestion("Pop Question " + i);
+            questionMaker.addScienceQuestion("Science Question " + i);
+            questionMaker.addSportsQuestion("Sports Question " + i);
+            questionMaker.addRockQuestion(" Rock Question " + i);
         }
     }
 
-    //TODO-later: The return value of method Game.add() is not used.
-    //对于服务端公共接口的改动放到最后去改
-    public boolean add(String playerName) {
-        players.add(playerName);
-        places[howManyPlayers()] = 0;
-        purses[howManyPlayers()] = 0;
-        inPenaltyBox[howManyPlayers()] = false;
-        //TODO-later: Replace System.out.println() with a log method of a logger.
-        System.out.println(playerName + " was added");
-        System.out.println("They are player number " + players.size());
-        return true;
+    public void add(String playerName) {
+        //todo-working-on: Move playerName into class Player
+        players.add(new Player(playerName));
+        logger.info(playerName + " was added");
+        logger.info("The total amount of players is " + players.size());
     }
 
     private int howManyPlayers() {
@@ -62,8 +57,8 @@ public class Game {
     }
 
     public void roll(int rollingNumber) {
-        System.out.println(players.get(currentPlayer) + " is the current player");
-        System.out.println("They have rolled a " + rollingNumber);
+        logger.info(players.get(currentPlayer) + " is the current player");
+        logger.info("They have rolled a " + rollingNumber);
 
         if (inPenaltyBox[currentPlayer]) {
             if (rollingNumber % 2 != 0) {
@@ -90,16 +85,16 @@ public class Game {
 
     private void askQuestion() {
         if (currentCategory() == "Pop") {
-            System.out.println(popQuestions.removeFirst());
+            System.out.println(questionMaker.removeFirstPopQuestion());
         }
         if (currentCategory() == "Science") {
-            System.out.println(scienceQuestions.removeFirst());
+            System.out.println(questionMaker.removeFirstScienceQuestion());
         }
         if (currentCategory() == "Sports") {
-            System.out.println(sportsQuestions.removeFirst());
+            System.out.println(questionMaker.removeFirstSportsQuestion());
         }
         if (currentCategory() == "Rock") {
-            System.out.println(rockQuestions.removeFirst());
+            System.out.println(questionMaker.removeFirstRockQuestion());
         }
     }
 

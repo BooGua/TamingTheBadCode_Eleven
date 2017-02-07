@@ -1,5 +1,6 @@
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 /**
@@ -7,6 +8,59 @@ import static org.junit.Assert.assertFalse;
  */
 public class GameTest {
     //TODO-user-intent: the game should be over if a player rolls the dice and answers each question correctly for 6 times.
+
+    @Test
+    public void add_two_pop_and_remove_one(){
+        // Arrange
+        QuestionMaker questionMaker = new QuestionMaker();
+
+        // Act
+        questionMaker.addPopQuestion("Pop Question 1");
+        questionMaker.addPopQuestion("Pop Question 2");
+
+        // Assert
+        assertEquals("Pop Question 1", questionMaker.removeFirstPopQuestion());
+    }
+
+    @Test
+    public void add_two_science_and_remove_one(){
+        // Arrange
+        QuestionMaker questionMaker = new QuestionMaker();
+
+        // Act
+        questionMaker.addScienceQuestion("Science Question 1");
+        questionMaker.addScienceQuestion("Science Question 2");
+
+        // Assert
+        assertEquals("Science Question 1", questionMaker.removeFirstScienceQuestion());
+    }
+
+    @Test
+    public void add_two_sports_and_remove_one(){
+        // Arrange
+        QuestionMaker questionMaker = new QuestionMaker();
+
+        // Act
+        questionMaker.addSportsQuestion("Sports Question 1");
+        questionMaker.addSportsQuestion("Sports Question 2");
+
+        // Assert
+        assertEquals("Sports Question 1", questionMaker.removeFirstSportsQuestion());
+    }
+
+    @Test
+    public void add_two_rock_and_remove_one(){
+        // Arrange
+        QuestionMaker questionMaker = new QuestionMaker();
+
+        // Act
+        questionMaker.addRockQuestion("Rock Question 1");
+        questionMaker.addRockQuestion("Rock Question 2");
+
+        // Assert
+        assertEquals("Rock Question 1", questionMaker.removeFirstRockQuestion());
+    }
+
     @Test
     public void the_game_should_be_over_if_a_player_rolls_the_dice_and_answers_each_question_correctly_for_6_times() {
         //Arrange

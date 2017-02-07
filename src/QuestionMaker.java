@@ -1,12 +1,45 @@
-/**
- * Created by ArtistQiu on 2017/1/26.
- */
 import java.util.LinkedList;
 
-/**
- * Created by benwu on 14-5-28.
- */
 public class QuestionMaker {
+    // todo-working-on: Move question lists to a new class QuestionMaker
+    private LinkedList<String> popQuestions = new LinkedList<String>();
+    private LinkedList<String> scienceQuestions = new LinkedList<String>();
+    private LinkedList<String> sportsQuestions = new LinkedList<String>();
+    private LinkedList<String> rockQuestions = new LinkedList<String>();
+
+    public void addPopQuestion(String popQuestion) {
+        popQuestions.add(popQuestion);
+    }
+
+    public void addScienceQuestion(String scineceQuestion) {
+        scienceQuestions.add(scineceQuestion);
+    }
+
+    public void addSportsQuestion(String sportsQuestion) {
+        sportsQuestions.add(sportsQuestion);
+    }
+
+    public void addRockQuestion(String rockQuestion) {
+        rockQuestions.add(rockQuestion);
+    }
+
+    public String removeFirstPopQuestion() {
+        return popQuestions.removeFirst();
+    }
+
+    public String removeFirstScienceQuestion() {
+        return scienceQuestions.remove();
+    }
+
+    public String removeFirstSportsQuestion() {
+        return sportsQuestions.remove();
+    }
+
+    public String removeFirstRockQuestion() {
+        return rockQuestions.remove();
+    }
+
+    /*
     public static final int MAX_NUMBER_OF_QUESTIONS = 50;
     private LinkedList<String> popQuestions = new LinkedList<String>();
     private LinkedList<String> scienceQuestions = new LinkedList<String>();
@@ -53,5 +86,5 @@ public class QuestionMaker {
     public String removeFirstRockQuestion() {
         return rockQuestions.removeFirst();
     }
-
+    */
 }
