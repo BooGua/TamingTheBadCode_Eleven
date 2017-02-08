@@ -11,14 +11,7 @@ import java.util.logging.SimpleFormatter;
 public class Game {
     //todo-: Move playerName into class Player
     private ArrayList<Player> players = new ArrayList<Player>(); //玩家的名字
-    //todo: Move places into class Player
-    private int[] places = new int[6]; //玩家位置
-    //todo: Move purses into class Player
-    private int[] purses = new int[6]; //金币数量
-    //todo: Move inPenaltyBox into class Player
-    private boolean[] inPenaltyBox = new boolean[6]; //是否在禁闭室
 
-    //todo: Move question lists to a new class QuestionMaker
     private final QuestionMaker questionMaker = new QuestionMaker();
 
     private int currentPlayer = 0;
@@ -58,17 +51,19 @@ public class Game {
 
     public void roll(int rollingNumber) {
         logger.info(players.get(currentPlayer) + " is the current player");
+        logger.info(players.get(currentPlayer) + "`s new location is" + players.get(currentPlayer).getPlace());
         logger.info("They have rolled a " + rollingNumber);
 
-        if (inPenaltyBox[currentPlayer]) {
+        if (players.get(currentPlayer).isInPenaltyBox()) {
             if (rollingNumber % 2 != 0) {
                 isGettingOutOfPenaltyBox = true;
+                players.get(currentPlayer).getOutOfPenaltyBox();
 
                 System.out.println(players.get(currentPlayer) + " is getting out of the penalty box");
                 currentPlayerMovesToNewPlaceAndAnswersAQuestion(rollingNumber);
             } else {
                 System.out.println(players.get(currentPlayer) + "is not getting out of the penalty box");
-                isGettingOutOfPenaltyBox = false;
+                players.get(currentPlayer).stayInPenaltyBox();
             }
         } else {
             currentPlayerMovesToNewPlaceAndAnswersAQuestion(rollingNumber);
@@ -76,62 +71,32 @@ public class Game {
     }
 
     private void currentPlayerMovesToNewPlaceAndAnswersAQuestion(int rollingNumber) {
-        places[currentPlayer] = places[currentPlayer] + rollingNumber;
-        if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
-        System.out.println(players.get(currentPlayer) + "'s new location is " + places[currentPlayer]);
-        System.out.println("The category is " + currentCategory());
+        players.get(currentPlayer).moveForwardSteps(rollingNumber);
+        logger.info(players.get(currentPlayer) + "`s new location is " + players.get(currentPlayer).getPlace());
+        logger.info("The category is " + players.get(currentPlayer).getCurrentCategory());
         askQuestion();
     }
 
     private void askQuestion() {
-        if (currentCategory() == "Pop") {
+        if (players.get(currentPlayer).getCurrentCategory() == "Pop") {
             System.out.println(questionMaker.removeFirstPopQuestion());
         }
-        if (currentCategory() == "Science") {
+        if (players.get(currentPlayer).getCurrentCategory() == "Science") {
             System.out.println(questionMaker.removeFirstScienceQuestion());
         }
-        if (currentCategory() == "Sports") {
+        if (players.get(currentPlayer).getCurrentCategory() == "Sports") {
             System.out.println(questionMaker.removeFirstSportsQuestion());
         }
-        if (currentCategory() == "Rock") {
+        if (players.get(currentPlayer).getCurrentCategory() == "Rock") {
             System.out.println(questionMaker.removeFirstRockQuestion());
         }
     }
 
-    private String currentCategory() {
-        if (places[currentPlayer] == 0) {
-            return "Pop";
-        }
-        if (places[currentPlayer] == 4) {
-            return "Pop";
-        }
-        if (places[currentPlayer] == 8) {
-            return "Pop";
-        }
-        if (places[currentPlayer] == 1) {
-            return "Science";
-        }
-        if (places[currentPlayer] == 5) {
-            return "Science";
-        }
-        if (places[currentPlayer] == 9) {
-            return "Science";
-        }
-        if (places[currentPlayer] == 2) {
-            return "Sports";
-        }
-        if (places[currentPlayer] == 6) {
-            return "Sports";
-        }
-        if (places[currentPlayer] == 10) {
-            return "Sports";
-        }
-        return "Rock";
-    }
+    //todo: Move method Game.currentCategory() to class QuestionMaker
 
     public boolean wasCorrectlyAnswered() {
-        if (inPenaltyBox[currentPlayer]) {
-            if (isGettingOutOfPenaltyBox) {
+        if (players.get(currentPlayer).isInPenaltyBox()) {
+            if (isGettingOutOfPenaltyBox || players.get(currentPlayer).isGettingOutOfPenaltyBox()) {
                 return currentPlayerGetsAGoldCoinAndSelectNextPlayer();
             } else {
                 nextPlayer();
@@ -144,8 +109,9 @@ public class Game {
 
     private boolean currentPlayerGetsAGoldCoinAndSelectNextPlayer() {
         System.out.println("Answer was correct!!!!");
-        purses[currentPlayer]++;
-        System.out.println(players.get(currentPlayer) + " now has " + purses[currentPlayer]
+        players.get(currentPlayer).winAGoldCoin();
+        logger.info(players.get(currentPlayer)
+                + " now has " + players.get(currentPlayer).countGoldCoins()
                 + " Gold Coins.");
 
         boolean isGameStillInProgress = isGameStillInProgress();
@@ -162,7 +128,7 @@ public class Game {
     public boolean wrongAnswer() {
         System.out.println("Question was incorrectly answered");
         System.out.println(players.get(currentPlayer) + " was sent to the penalty box");
-        inPenaltyBox[currentPlayer] = true;
+        players.get(currentPlayer).sentToPenaltyBox();
 
         nextPlayer();
         //TODO-later: The return value of method Game.wrongAnswer() is unnecessary and should be eliminated
@@ -170,6 +136,7 @@ public class Game {
     }
 
     private boolean isGameStillInProgress() {
-        return !(purses[currentPlayer] == 6);
+        //todo: The magic number 6
+        return !(players.get(currentPlayer).countGoldCoins() == 6);
     }
 }
